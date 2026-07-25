@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>İsim Şehir Cevap Bulucu</title>
+<style>
+body{margin:0;background:#11152f;color:#fff;font-family:Arial,sans-serif;padding:24px}
+main{max-width:680px;margin:auto}
+h1{text-align:center;margin:10px 0}
+p{text-align:center;color:#aeb4d6}
+input{display:block;margin:24px auto;width:120px;height:90px;text-align:center;font-size:50px;font-weight:bold;color:#fff;background:#1d2350;border:2px solid #7655ff;border-radius:18px;outline:0;text-transform:uppercase}
+#list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#1b2044;border:1px solid #333a70;border-radius:14px;padding:16px}
+.cat{color:#9fa6ce;font-size:13px;margin-bottom:7px}.ans{font-size:20px;font-weight:bold}
+@media(max-width:520px){#list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>🎯 İsim Şehir Cevap Bulucu</h1>
+<p>Harfini yaz, cevaplar anında gelsin.</p>
+<input id="harf" maxlength="1" autofocus placeholder="A">
+
+<div id="list"></div>
+</main>
+
+<script>
+var cevaplar = {
+"A":["Ahmet","Ankara","At","Armut","Ayna","Acun Ilıcalı","Apple","Avatar"],
+"B":["Burak","Bursa","Balina","Badem","Bardak","Brad Pitt","BMW","Breaking Bad"],
+"C":["Cem","Ceyhan","Ceylan","Ceviz","Cüzdan","Cem Yılmaz","Canon","Coco"],
+"Ç":["Çağla","Çorum","Çakal","Çam","Çanta","Çağatay Ulusoy","Çilek","Çılgın Hırsız"],
+"D":["Deniz","Diyarbakır","Deve","Dut","Dolap","Dwayne Johnson","Dacia","Dune"],
+"E":["Emre","Edirne","Eşek","Elma","Eldiven","Emma Watson","Epson","Ezel"],
+"F":["Fatih","Fethiye","Fil","Fesleğen","Fırın","Fahriye Evcen","Ferrari","Friends"],
+"G":["Gökhan","Gaziantep","Geyik","Gül","Gitar","Gülben Ergen","Google","Gladyatör"],
+"H":["Hasan","Hatay","Horoz","Hurma","Halı","Hülya Avşar","Honda","Harry Potter"],
+"I":["Işıl","Iğdır","Istakoz","Ihlamur","Isıtıcı","Işın Karaca","Ikea","I Am Legend"],
+"İ":["İbrahim","İzmir","İnek","İncir","İğne","İbrahim Tatlıses","İstikbal","İnception"],
+"J":["Jale","—","Jaguar","Japon gülü","Jilet","Jennifer Lopez","Jaguar","Joker"],
+"K":["Kemal","Konya","Kedi","Kavun","Kalem","Kenan İmirzalıoğlu","Kia","Kurtlar Vadisi"],
+"L":["Leyla","Lüleburgaz","Leylek","Lale","Lamba","Leonardo DiCaprio","Lacoste","Lost"],
+"M":["Mehmet","Muğla","Maymun","Mandalina","Masa","Mustafa Kemal Atatürk","Mercedes","Matrix"],
+"N":["Nihat","Nevşehir","Narval","Nane","Nevresim","Nuri Bilge Ceylan","Nike","Narcos"],
+"O":["Onur","Osmaniye","Orangutan","Orkide","Ocak","Orhan Gencebay","Opel","Oppenheimer"],
+"Ö":["Ömer","Ödemiş","Ördek","Ökse otu","Önlük","Özcan Deniz","Özdilek","Ölümlü Dünya"],
+"P":["Pelin","Paris","Penguen","Papatya","Perde","Pınar Altuğ","Puma","Peaky Blinders"],
+"R":["Rıza","Rize","Rakûn","Reyhan","Rende","Ronaldo","Renault","Rocky"],
+"S":["Serkan","Samsun","Sincap","Sarmaşık","Saat","Sezen Aksu","Samsung","Squid Game"],
+"Ş":["Şahin","Şanlıurfa","Şahin","Şeftali","Şemsiye","Şener Şen","Şişecam","Şahsiyet"],
+"T":["Tolga","Trabzon","Tavşan","Turp","Televizyon","Tarkan","Toyota","Titanic"],
+"U":["Umut","Uşak","Uğur böceği","Udi hindi","Uçak","Uğur Dündar","Uber","Up"],
+"Ü":["Ümit","Ünye","Üveyik","Üzüm","Ütü","Ümit Besen","Ülker","Üç Kuruş"],
+"V":["Veli","Van","Vaşak","Vanilya","Vazo","Vatan Şaşmaz","Volkswagen","Vikings"],
+"Y":["Yasin","Yalova","Yılan","Yasemin","Yastık","Yılmaz Erdoğan","Yamaha","Yüzüklerin Efendisi"],
+"Z":["Zeynep","Zonguldak","Zebra","Zeytin","Zarf","Zeki Müren","Zara","Zootropolis"]
+};
+
+var kategoriler=["İsim","Şehir","Hayvan","Bitki","Eşya","Ünlü","Marka","Dizi / Film"];
+var harf=document.getElementById("harf");
+var list=document.getElementById("list");
+
+function goster(){
+  var h=harf.value.trim().toLocaleUpperCase("tr-TR");
+  harf.value=h;
+  if(!h){
+    list.innerHTML='<div class="card" style="grid-column:1/-1;text-align:center"><div class="ans">Bir harf yaz 👆</div></div>';
+    return;
+  }
+  var c=cevaplar[h];
+  if(!c){
+    list.innerHTML='<div class="card" style="grid-column:1/-1;text-align:center"><div class="ans">Bu harf için cevap bulunamadı.</div></div>';
+    return;
+  }
+  var html="";
+  for(var i=0;i<kategoriler.length;i++){
+    html+='<div class="card"><div class="cat">'+kategoriler[i]+'</div><div class="ans">'+c[i]+'</div></div>';
+  }
+  list.innerHTML=html;
+}
+
+harf.oninput=goster;
+goster();
+</script>
+</body>
+</html>
