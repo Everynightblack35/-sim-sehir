@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>İsim Şehir Cevap Bulucu</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0d1128;color:#fff;font-family:Arial,sans-serif}
+main{max-width:760px;margin:auto;padding:18px 14px 35px}
+header{text-align:center}h1{margin:5px 0;font-size:27px}.sub{color:#aab0d0}
+.search{position:sticky;top:0;background:#0d1128;padding:15px 0;z-index:2}
+input{width:100%;height:72px;border:2px solid #7655ff;border-radius:18px;background:#191e42;color:#fff;text-align:center;font-size:42px;font-weight:bold;outline:0;text-transform:uppercase}
+#results{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#191e42;border:1px solid #30376e;border-radius:15px;padding:14px}.cat{color:#aab0d0;font-size:13px;margin-bottom:8px}.options{display:flex;flex-wrap:wrap;gap:7px}.option{background:#282e5c;padding:8px 10px;border-radius:9px;font-weight:bold}
+.info{text-align:center;color:#9ba2c6;padding:20px;grid-column:1/-1}
+@media(max-width:560px){#results{grid-template-columns:1fr}}
+</style></head>
+<body><main>
+<header><h1>🎯 İsim Şehir Cevap Bulucu</h1><div class="sub">Harfini yaz, her kategoride 3 seçenek gör.</div></header>
+<div class="search"><input id="letter" maxlength="1" autofocus placeholder="A"></div>
+<div id="results"><div class="info">Bir harf yaz.</div></div>
+</main>
+<script>
+const C=["İsim","Şehir","Hayvan","Bitki","Eşya","Ünlü","Marka","Dizi / Film"];
+const D={
+A:[["Ahmet","Ayşe","Ali"],["Ankara","Adana","Amsterdam"],["At","Arı","Ayı"],["Armut","Akasya","Aloe vera"],["Ayna","Anahtar","Askı"],["Acun Ilıcalı","Ajda Pekkan","Albert Einstein"],["Apple","Arçelik","Adidas"],["Avatar","Aşk-ı Memnu","Avengers"]],
+B:[["Burak","Buse","Berk"],["Bursa","Bolu","Berlin"],["Balina","Baykuş","Boğa"],["Badem","Biber","Begonya"],["Bardak","Bavul","Bıçak"],["Brad Pitt","Beyoncé","Barış Manço"],["BMW","Bosch","Burger King"],["Breaking Bad","Batman","Barbie"]],
+C:[["Cem","Ceren","Can"],["Cenevre","Cape Town","Chicago"],["Ceylan","Civciv","Cobra"],["Ceviz","Civanperçemi","Cennet elması"],["Cüzdan","Cetvel","Ceket"],["Cem Yılmaz","Cüneyt Arkın","Chris Hemsworth"],["Canon","Citroën","Chanel"],["Coco","Cars","Chernobyl"]],
+Ç:[["Çağla","Çetin","Çiğdem"],["Çorum","Çanakkale","Çeşme"],["Çakal","Çita","Çekirge"],["Çam","Çilek","Çınar"],["Çanta","Çekiç","Çatal"],["Çağatay Ulusoy","Çetin Tekindor","Çelik"],["Çilek","Çaykur","Çınar"],["Çılgın Hırsız","Çukur","Çanakkale 1915"]],
+D:[["Deniz","Derya","Doruk"],["Diyarbakır","Denizli","Dubai"],["Deve","Domuz","Devekuşu"],["Dut","Defne","Dereotu"],["Dolap","Defter","Dürbün"],["Dwayne Johnson","Demet Akalın","David Beckham"],["Dacia","Dell","Dior"],["Dune","Dark","Dexter"]],
+E:[["Emre","Elif","Ece"],["Edirne","Erzurum","Erivan"],["Eşek","Eşekarısı","Engerek"],["Elma","Erik","Enginar"],["Eldiven","Etek","Elektrikli süpürge"],["Emma Watson","Elvis Presley","Ebru Gündeş"],["Epson","Emirates","Estée Lauder"],["Ezel","Elite","Encanto"]],
+F:[["Fatih","Fırat","Funda"],["Fethiye","Frankfurt","Floransa"],["Fil","Fare","Fok"],["Fesleğen","Fındık","Fasulye"],["Fırın","Fener","Fincan"],["Fahriye Evcen","Fazıl Say","Freddie Mercury"],["Ferrari","Ford","Fanta"],["Friends","Frozen","Forrest Gump"]],
+G:[["Gökhan","Gizem","Gamze"],["Gaziantep","Giresun","Groningen"],["Geyik","Goril","Güvercin"],["Gül","Gelincik","Greyfurt"],["Gitar","Gözlük","Gardırop"],["Gülben Ergen","George Clooney","Gandhi"],["Google","Gucci","Goodyear"],["Gladyatör","Game of Thrones","Godfather"]],
+H:[["Hasan","Hazal","Hakan"],["Hatay","Hamburg","Houston"],["Horoz","Hamsi","Hindi"],["Hurma","Havuç","Hanımeli"],["Halı","Havlu","Hoparlör"],["Hülya Avşar","Hadise","Harry Styles"],["Honda","Huawei","H&M"],["Harry Potter","House","Hobbit"]],
+I:[["Işıl","Irmak","Işık"],["Iğdır","Isparta","Iraklion"],["Istakoz","Iguana","İbis"],["Ihlamur","Isırgan","Ispanak"],["Isıtıcı","Islak mendil","Izgara"],["Işın Karaca","Ibrahimovic","Isaac Newton"],["Ikea","Intel","Iveco"],["I Am Legend","Interstellar","It"]],
+İ:[["İbrahim","İrem","İlayda"],["İstanbul","İzmir","İskenderun"],["İnek","İguana","İpekböceği"],["İncir","İğde","İhlamur"],["İğne","İp","İbrik"],["İbrahim Tatlıses","İlber Ortaylı","İrem Derici"],["İstikbal","İpekyol","İnci"],["İnception","İçerde","İron Man"]],
+J:[["Jale","Jülide","Janset"],["Jakarta","Johannesburg","Jerusalem"],["Jaguar","Jako papağanı","Jel balığı"],["Japon gülü","Jakaranda","Jüt"],["Jilet","Jaluzi","Jeneratör"],["Jennifer Lopez","Jackie Chan","Johnny Depp"],["Jaguar","Jeep","JBL"],["Joker","John Wick","Jurassic Park"]],
+K:[["Kemal","Kaan","Kübra"],["Konya","Kayseri","Kopenhag"],["Kedi","Kaplan","Kartal"],["Kavun","Karpuz","Kestane"],["Kalem","Kanepe","Kemer"],["Kenan İmirzalıoğlu","Kıvanç Tatlıtuğ","Keanu Reeves"],["Kia","Koton","Kellogg's"],["Kurtlar Vadisi","Karayip Korsanları","Kung Fu Panda"]],
+L:[["Leyla","Levent","Lale"],["Londra","Los Angeles","Lizbon"],["Leylek","Leopar","Lama"],["Lale","Lavanta","Limon"],["Lamba","Laptop","Lif"],["Leonardo DiCaprio","LeBron James","Lady Gaga"],["Lacoste","Lego","Lamborghini"],["Lost","La Casa de Papel","Loki"]],
+M:[["Mehmet","Mert","Mustafa"],["Muğla","Madrid","Miami"],["Maymun","Manda","Martı"],["Mandalina","Mısır","Menekşe"],["Masa","Makas","Mont"],["Mustafa Kemal Atatürk","Messi","Madonna"],["Mercedes","Microsoft","Michelin"],["Matrix","Memento","Moana"]],
+N:[["Nihat","Nazlı","Neslihan"],["Nevşehir","Napoli","New York"],["Narval","Nehir atı","Nandu"],["Nane","Nergis","Nar"],["Nevresim","Not defteri","Numara makinesi"],["Nuri Bilge Ceylan","Nicolas Cage","Neymar"],["Nike","Nissan","Nokia"],["Narcos","Narnia","Nobody"]],
+O:[["Onur","Okan","Orhan"],["Osmaniye","Oslo","Orlando"],["Orangutan","Orka","Oklu kirpi"],["Orkide","Okaliptüs","Ot"],["Ocak","Oklava","Oyuncak"],["Orhan Gencebay","Orhan Pamuk","Oprah Winfrey"],["Opel","Oppo","Oral-B"],["Oppenheimer","Ozark","O"]],
+Ö:[["Ömer","Özge","Özkan"],["Ödemiş","Örebro","Östersund"],["Ördek","Öküz","Örümcek"],["Ökse otu","Özbek üzümü","Ölümsüzlük otu"],["Önlük","Örtü","Ölçü aleti"],["Özcan Deniz","Özge Özpirinçci","Ömer Seyfettin"],["Özdilek","Özkaymak","Özen"],["Ölümlü Dünya","Örümcek Adam","Özgür Dünya"]],
+P:[["Pelin","Polat","Pınar"],["Paris","Prag","Pekin"],["Penguen","Papağan","Panda"],["Papatya","Pırasa","Patates"],["Perde","Pencere","Paspas"],["Pınar Altuğ","Pablo Picasso","Pedro Pascal"],["Puma","Peugeot","Philips"],["Peaky Blinders","Prison Break","Pirates of the Caribbean"]],
+R:[["Rıza","Rabia","Rana"],["Rize","Roma","Rotterdam"],["Rakun","Ren geyiği","Rakun balığı"],["Reyhan","Roka","Ravent"],["Rende","Radyo","Raf"],["Ronaldo","Robert De Niro","Rihanna"],["Renault","Rolex","Ray-Ban"],["Rocky","Ratatouille","Reacher"]],
+S:[["Serkan","Selin","Sinan"],["Samsun","Sivas","Seul"],["Sincap","Serçe","Su samuru"],["Sarmaşık","Soğan","Söğüt"],["Saat","Sandalye","Süpürge"],["Sezen Aksu","Serdar Ortaç","Sylvester Stallone"],["Samsung","Sony","Starbucks"],["Squid Game","Sherlock","Superman"]],
+Ş:[["Şahin","Şeyma","Şule"],["Şanlıurfa","Şırnak","Şanghay"],["Şahin","Şempanze","Şinşilla"],["Şeftali","Şeker pancarı","Şimşir"],["Şemsiye","Şişe","Şapka"],["Şener Şen","Şevval Sam","Şakira"],["Şişecam","Şok","Şahinler"],["Şahsiyet","Şrek","Şirinler"]],
+T:[["Tolga","Tuğçe","Tuna"],["Trabzon","Tekirdağ","Tokyo"],["Tavşan","Tilki","Timsah"],["Turp","Tarçın","Tütün"],["Televizyon","Telefon","Tabak"],["Tarkan","Tom Cruise","Taylor Swift"],["Toyota","Tesla","Toshiba"],["Titanic","Terminator","The Office"]],
+U:[["Umut","Ufuk","Uğur"],["Uşak","Utrecht","Uppsala"],["Uğur böceği","Uskumru","Urgan yılanı"],["Udi hindi","Uyuz otu","Uçkun"],["Uçak","Uzatma kablosu","USB bellek"],["Uğur Dündar","Usain Bolt","Uma Thurman"],["Uber","Unilever","Under Armour"],["Up","Us","Uncharted"]],
+Ü:[["Ümit","Ülkü","Ünal"],["Ünye","Üsküp","Ürümçi"],["Üveyik","Üç dikenli balık","Ürkek geyik"],["Üzüm","Üzerlik","Üçgül"],["Ütü","Üniforma","Ürün kutusu"],["Ümit Besen","Ümit Yaşar Oğuzcan","Ümit Davala"],["Ülker","Ülker Golf","Üçler"],["Üç Kuruş","Üç Idiots","Üvey Anne"]],
+V:[["Veli","Vildan","Vedat"],["Van","Viyana","Venedik"],["Vaşak","Vatoz","Vizon"],["Vanilya","Vişne","Verbena"],["Vazo","Valiz","Vantilatör"],["Vatan Şaşmaz","Vin Diesel","Victoria Beckham"],["Volkswagen","Volvo","Versace"],["Vikings","Venom","V for Vendetta"]],
+Y:[["Yasin","Yasemin","Yiğit"],["Yalova","Yozgat","Yokohama"],["Yılan","Yunus","Yarasa"],["Yasemin","Yonca","Yulaf"],["Yastık","Yorgan","Yüzük"],["Yılmaz Erdoğan","Yalın","Yıldız Tilbe"],["Yamaha","Yves Saint Laurent","Yudum"],["Yüzüklerin Efendisi","You","Yellowstone"]],
+Z:[["Zeynep","Zeki","Zehra"],["Zonguldak","Zürih","Zagreb"],["Zebra","Zürafa","Zebu"],["Zeytin","Zencefil","Zakkum"],["Zarf","Zil","Zımba"],["Zeki Müren","Zeynep Bastık","Zlatan Ibrahimovic"],["Zara","Zippo","Zomato"],["Zootropolis","Zindan Adası","Zack Snyder's Justice League"]]
+};
+const input=document.getElementById("letter"), results=document.getElementById("results");
+function render(){
+ let h=input.value.trim().toLocaleUpperCase("tr-TR"); input.value=h;
+ if(!h){results.innerHTML='<div class="info">Bir harf yaz.</div>';return}
+ let d=D[h]; if(!d){results.innerHTML='<div class="info">Bu harf için veri bulunamadı.</div>';return}
+ results.innerHTML=C.map((cat,i)=>'<div class="card"><div class="cat">'+cat+'</div><div class="options">'+d[i].map(x=>'<span class="option">'+x+'</span>').join("")+'</div></div>').join("");
+}
+input.addEventListener("input",render);render();
+</script></body></html>
